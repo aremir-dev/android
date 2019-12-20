@@ -27,7 +27,7 @@ import android.os.Parcelable;
 
 import com.owncloud.android.MainApp;
 import com.owncloud.android.R;
-import com.owncloud.android.lib.common.utils.Log_OC;
+import timber.log.Timber;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -40,8 +40,6 @@ public class FeatureList {
 
     static final private boolean SHOW_ON_FIRST_RUN = true;
     static final private boolean SHOW_ON_UPGRADE = false;
-
-    private static final String TAG = FeatureList.class.getSimpleName();
 
     static final private FeatureItem featuresList[] = {
             // Basic features showed on first install
@@ -71,7 +69,7 @@ public class FeatureList {
                                             boolean anyAccountWithServerVersionLowerThan10) {
         List<FeatureItem> features = new LinkedList<>();
 
-        Log_OC.d(TAG, "Getting filtered features");
+        Timber.d("Getting filtered features");
 
         for (FeatureItem item : get()) {
             final int itemVersionCode = isBeta ? item.getBetaVersionNumber() : item.getVersionNumber();
@@ -202,7 +200,7 @@ public class FeatureList {
     static int versionCodeFromString(String version) {
         String v[] = version.split(Pattern.quote("."));
         if (v.length != 3) {
-            Log_OC.d(TAG, "Version string is incorrect " + version);
+            Timber.d("Version string is incorrect " + version);
             return 0;
         }
         int result = Integer.parseInt(v[0]) * (int) (10e6) +

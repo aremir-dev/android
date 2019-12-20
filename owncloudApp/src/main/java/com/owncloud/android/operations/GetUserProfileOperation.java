@@ -31,13 +31,13 @@ import com.owncloud.android.datamodel.UserProfilesRepository;
 import com.owncloud.android.lib.common.OwnCloudClient;
 import com.owncloud.android.lib.common.accounts.AccountUtils;
 import com.owncloud.android.lib.common.operations.RemoteOperationResult;
-import com.owncloud.android.lib.common.utils.Log_OC;
 import com.owncloud.android.lib.resources.users.GetRemoteUserAvatarOperation;
 import com.owncloud.android.lib.resources.users.GetRemoteUserInfoOperation;
 import com.owncloud.android.lib.resources.users.GetRemoteUserInfoOperation.UserInfo;
 import com.owncloud.android.lib.resources.users.GetRemoteUserQuotaOperation;
 import com.owncloud.android.lib.resources.users.GetRemoteUserQuotaOperation.RemoteQuota;
 import com.owncloud.android.operations.common.SyncOperation;
+import timber.log.Timber;
 
 /**
  * Get and save user's profile from the server.
@@ -45,8 +45,6 @@ import com.owncloud.android.operations.common.SyncOperation;
  * Currently only retrieves the display name.
  */
 public class GetUserProfileOperation extends SyncOperation {
-
-    private static final String TAG = GetUserProfileOperation.class.getName();
 
     private String mRemotePath;
 
@@ -153,7 +151,7 @@ public class GetUserProfileOperation extends SyncOperation {
                         userProfile.setAvatar(userAvatar);
 
                     } else if (quotaOperationResult.getCode().equals(RemoteOperationResult.ResultCode.FILE_NOT_FOUND)) {
-                        Log_OC.i(TAG, "No avatar available, removing cached copy");
+                        Timber.i("No avatar available, removing cached copy");
                         userProfilesRepository.deleteAvatar(storedAccount.name);
                         ThumbnailsCacheManager.removeAvatarFromCache(storedAccount.name);
 
@@ -176,7 +174,7 @@ public class GetUserProfileOperation extends SyncOperation {
                 return userInfoOperationResult;
             }
         } catch (Exception e) {
-            Log_OC.e(TAG, "Exception while getting user profile: ", e);
+            Timber.e(e, "Exception while getting user profile: ");
             return new RemoteOperationResult(e);
         }
     }

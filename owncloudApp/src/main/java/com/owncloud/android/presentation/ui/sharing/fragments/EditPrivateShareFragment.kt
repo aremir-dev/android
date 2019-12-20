@@ -40,7 +40,6 @@ import com.owncloud.android.domain.sharing.shares.model.OCShare
 import com.owncloud.android.domain.sharing.shares.model.ShareType
 import com.owncloud.android.domain.utils.Event.EventObserver
 import com.owncloud.android.extensions.parseError
-import com.owncloud.android.lib.common.utils.Log_OC
 import com.owncloud.android.lib.resources.shares.RemoteShare
 import com.owncloud.android.lib.resources.shares.SharePermissionsBuilder
 import com.owncloud.android.presentation.UIResult
@@ -50,6 +49,7 @@ import kotlinx.android.synthetic.main.edit_share_layout.*
 import kotlinx.android.synthetic.main.edit_share_layout.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import timber.log.Timber
 import java.util.Locale
 
 /**
@@ -86,13 +86,13 @@ class EditPrivateShareFragment : DialogFragment() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log_OC.d(TAG, "onCreate")
+        Timber.d("onCreate")
         if (arguments != null) {
             file = arguments?.getParcelable(ARG_FILE)
             account = arguments?.getParcelable(ARG_ACCOUNT)
             share = savedInstanceState?.getParcelable(ARG_SHARE) ?: arguments?.getParcelable(ARG_SHARE)
-            Log_OC.e(
-                TAG, String.format(
+            Timber.e(
+                String.format(
                     Locale.getDefault(), "Share has id %1\$d remoteId %2\$d", share?.id,
                     share?.remoteId
                 )
@@ -104,7 +104,7 @@ class EditPrivateShareFragment : DialogFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        Log_OC.d(TAG, "onActivityCreated")
+        Timber.d("onActivityCreated")
 
         // To observe the changes in a just updated share
         refreshPrivateShare(share?.remoteId!!)
@@ -120,7 +120,7 @@ class EditPrivateShareFragment : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        Log_OC.d(TAG, "onCreateView")
+        Timber.d("onCreateView")
 
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.edit_share_layout, container, false)
@@ -257,12 +257,12 @@ class EditPrivateShareFragment : DialogFragment() {
             var subordinate: CompoundButton
             when (compound.id) {
                 R.id.canShareSwitch -> {
-                    Log_OC.v(TAG, "canShareCheckBox toggled to $isChecked")
+                    Timber.v("canShareCheckBox toggled to $isChecked")
                     updatePermissionsToShare()
                 }
 
                 R.id.canEditSwitch -> {
-                    Log_OC.v(TAG, "canEditCheckBox toggled to $isChecked")
+                    Timber.v("canEditCheckBox toggled to $isChecked")
                     /// sync subordinate CheckBoxes
                     val isFederated = share?.shareType == ShareType.FEDERATED
                     if (file?.isFolder == true) {
@@ -311,19 +311,19 @@ class EditPrivateShareFragment : DialogFragment() {
                 }
 
                 R.id.canEditCreateCheckBox -> {
-                    Log_OC.v(TAG, "canEditCreateCheckBox toggled to $isChecked")
+                    Timber.v("canEditCreateCheckBox toggled to $isChecked")
                     syncCanEditSwitch(compound, isChecked)
                     updatePermissionsToShare()
                 }
 
                 R.id.canEditChangeCheckBox -> {
-                    Log_OC.v(TAG, "canEditChangeCheckBox toggled to $isChecked")
+                    Timber.v("canEditChangeCheckBox toggled to $isChecked")
                     syncCanEditSwitch(compound, isChecked)
                     updatePermissionsToShare()
                 }
 
                 R.id.canEditDeleteCheckBox -> {
-                    Log_OC.v(TAG, "canEditDeleteCheckBox toggled to $isChecked")
+                    Timber.v("canEditDeleteCheckBox toggled to $isChecked")
                     syncCanEditSwitch(compound, isChecked)
                     updatePermissionsToShare()
                 }
@@ -457,8 +457,6 @@ class EditPrivateShareFragment : DialogFragment() {
     }
 
     companion object {
-        private val TAG = EditPrivateShareFragment::class.java.simpleName
-
         /** The fragment initialization parameters  */
         private const val ARG_SHARE = "SHARE"
         private const val ARG_FILE = "FILE"

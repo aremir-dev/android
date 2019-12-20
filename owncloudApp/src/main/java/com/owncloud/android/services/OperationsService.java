@@ -54,7 +54,6 @@ import com.owncloud.android.lib.common.authentication.oauth.OAuth2RequestBuilder
 import com.owncloud.android.lib.common.operations.OnRemoteOperationListener;
 import com.owncloud.android.lib.common.operations.RemoteOperation;
 import com.owncloud.android.lib.common.operations.RemoteOperationResult;
-import com.owncloud.android.lib.common.utils.Log_OC;
 import com.owncloud.android.lib.resources.status.OwnCloudVersion;
 import com.owncloud.android.lib.resources.users.GetRemoteUserInfoOperation;
 import com.owncloud.android.operations.CheckCurrentCredentialsOperation;
@@ -67,6 +66,7 @@ import com.owncloud.android.operations.RenameFileOperation;
 import com.owncloud.android.operations.SynchronizeFileOperation;
 import com.owncloud.android.operations.SynchronizeFolderOperation;
 import com.owncloud.android.operations.common.SyncOperation;
+import timber.log.Timber;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -75,8 +75,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 
 public class OperationsService extends Service {
-
-    private static final String TAG = OperationsService.class.getSimpleName();
 
     public static final String EXTRA_ACCOUNT = "ACCOUNT";
     public static final String EXTRA_SERVER_URL = "SERVER_URL";
@@ -143,7 +141,7 @@ public class OperationsService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log_OC.d(TAG, "Creating service");
+        Timber.d("Creating service");
 
         /// First worker thread for most of operations 
         HandlerThread thread = new HandlerThread("Operations thread",
@@ -169,14 +167,14 @@ public class OperationsService extends Service {
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log_OC.d(TAG, "Starting command with id " + startId);
+        Timber.d("Starting command with id %s", startId);
 
         // WIP: for the moment, only SYNC_FOLDER is expected here;
         // the rest of the operations are requested through the Binder
         if (ACTION_SYNC_FOLDER.equals(intent.getAction())) {
 
             if (!intent.hasExtra(EXTRA_ACCOUNT) || !intent.hasExtra(EXTRA_REMOTE_PATH)) {
-                Log_OC.e(TAG, "Not enough information provided in intent");
+                Timber.e("Not enough information provided in intent");
                 return START_NOT_STICKY;
             }
             Account account = intent.getParcelableExtra(EXTRA_ACCOUNT);
@@ -205,7 +203,7 @@ public class OperationsService extends Service {
 
     @Override
     public void onDestroy() {
-        Log_OC.v(TAG, "Destroying service");
+        Timber.v("Destroying service");
         // Saving cookies
         try {
             OwnCloudClientManagerFactory.getDefaultSingleton().
@@ -349,7 +347,7 @@ public class OperationsService extends Service {
             if (undispatched != null) {
                 listener.onRemoteOperationFinish(undispatched.first, undispatched.second);
                 return true;
-                //Log_OC.e(TAG, "Sending callback later");
+                //Timber.e("Sending callback later");
             } else {
                 return (!mServiceHandler.mPendingOperations.isEmpty());
             }
@@ -401,7 +399,7 @@ public class OperationsService extends Service {
         @Override
         public void handleMessage(Message msg) {
             nextOperation();
-            Log_OC.d(TAG, "Stopping after command with id " + msg.arg1);
+            Timber.d("Stopping after command with id %s", msg.arg1);
             mService.stopSelf(msg.arg1);
         }
 
@@ -410,7 +408,7 @@ public class OperationsService extends Service {
          */
         private void nextOperation() {
 
-            //Log_OC.e(TAG, "nextOperation init" );
+            //Timber.e("nextOperation init" );
 
             Pair<Target, RemoteOperation> next;
             synchronized (mPendingOperations) {
@@ -460,19 +458,17 @@ public class OperationsService extends Service {
 
                 } catch (AccountsException | IOException e) {
                     if (mLastTarget.mAccount == null) {
-                        Log_OC.e(TAG, "Error while trying to get authorization for a NULL account",
-                                e);
+                        Timber.e(e, "Error while trying to get authorization for a NULL account");
                     } else {
-                        Log_OC.e(TAG, "Error while trying to get authorization for " +
-                                mLastTarget.mAccount.name, e);
+                        Timber.e(e, "Error while trying to get authorization for %s", mLastTarget.mAccount.name);
                     }
                     result = new RemoteOperationResult(e);
 
                 } catch (Exception e) {
                     if (mLastTarget.mAccount == null) {
-                        Log_OC.e(TAG, "Unexpected error for a NULL account", e);
+                        Timber.e(e, "Unexpected error for a NULL account");
                     } else {
-                        Log_OC.e(TAG, "Unexpected error for " + mLastTarget.mAccount.name, e);
+                        Timber.e(e, "Unexpected error for %s", mLastTarget.mAccount.name);
                     }
                     result = new RemoteOperationResult(e);
 
@@ -502,7 +498,7 @@ public class OperationsService extends Service {
         try {
             if (!operationIntent.hasExtra(EXTRA_ACCOUNT) &&
                     !operationIntent.hasExtra(EXTRA_SERVER_URL)) {
-                Log_OC.e(TAG, "Not enough information provided in intent");
+                Timber.e("Not enough information provided in intent");
 
             } else {
                 Account account = operationIntent.getParcelableExtra(EXTRA_ACCOUNT);
@@ -599,7 +595,7 @@ public class OperationsService extends Service {
             }
 
         } catch (IllegalArgumentException e) {
-            Log_OC.e(TAG, "Bad information provided in intent: " + e.getMessage());
+            Timber.e(e, "Bad information provided in intent: %s", e.getMessage());
             operation = null;
         }
 
@@ -683,6 +679,6 @@ public class OperationsService extends Service {
                     new Pair<>(operation, result);
             mUndispatchedFinishedOperations.put(operation.hashCode(), undispatched);
         }
-        Log_OC.d(TAG, "Called " + count + " listeners");
+        Timber.d("Called " + count + " listeners");
     }
 }
