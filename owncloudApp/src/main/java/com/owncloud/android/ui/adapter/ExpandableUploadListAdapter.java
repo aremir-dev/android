@@ -50,7 +50,6 @@ import com.owncloud.android.files.services.FileUploader;
 import com.owncloud.android.files.services.TransferRequester;
 import com.owncloud.android.lib.common.OwnCloudAccount;
 import com.owncloud.android.lib.common.network.OnDatatransferProgressListener;
-import com.owncloud.android.lib.common.utils.Log_OC;
 import com.owncloud.android.ui.activity.FileActivity;
 import com.owncloud.android.utils.DisplayUtils;
 import com.owncloud.android.utils.MimetypeIconUtil;
@@ -319,7 +318,7 @@ public class ExpandableUploadListAdapter extends BaseExpandableListAdapter imple
                             }
                         }
                     } else {
-                        Timber.w("FileUploaderBinder not ready yet for upload " + upload.getRemotePath());
+                        Timber.w("FileUploaderBinder not ready yet for upload %s", upload.getRemotePath());
                     }
                     uploadDateTextView.setVisibility(View.GONE);
                     pathTextView.setVisibility(View.GONE);

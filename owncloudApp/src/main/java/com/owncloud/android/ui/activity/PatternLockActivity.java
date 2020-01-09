@@ -40,15 +40,13 @@ import com.andrognito.patternlockview.utils.PatternLockUtils;
 import com.google.android.material.snackbar.Snackbar;
 import com.owncloud.android.MainApp;
 import com.owncloud.android.R;
-import com.owncloud.android.lib.common.utils.Log_OC;
 import com.owncloud.android.utils.DocumentProviderUtils;
 import com.owncloud.android.utils.PreferenceUtils;
+import timber.log.Timber;
 
 import java.util.List;
 
 public class PatternLockActivity extends AppCompatActivity {
-
-    private static final String TAG = PatternLockActivity.class.getSimpleName();
 
     public final static String PREFERENCE_SET_PATTERN = "set_pattern";
     public final static String ACTION_REQUEST_WITH_RESULT = "ACTION_REQUEST_WITH_RESULT";
@@ -148,13 +146,12 @@ public class PatternLockActivity extends AppCompatActivity {
         mPatternLockView.addPatternLockListener(new PatternLockViewListener() {
             @Override
             public void onStarted() {
-                Log_OC.d(TAG, "Pattern Drawing Started");
+                Timber.d("Pattern Drawing Started");
             }
 
             @Override
             public void onProgress(List<PatternLockView.Dot> list) {
-                Log_OC.d(TAG, "Pattern Progress " +
-                        PatternLockUtils.patternToString(mPatternLockView, list));
+                Timber.d("Pattern Progress %s", PatternLockUtils.patternToString(mPatternLockView, list));
             }
 
             @Override
@@ -177,13 +174,13 @@ public class PatternLockActivity extends AppCompatActivity {
                 } else {
                     mPatternValue = PatternLockUtils.patternToString(mPatternLockView, list);
                 }
-                Log_OC.d(TAG, "Pattern " + PatternLockUtils.patternToString(mPatternLockView, list));
+                Timber.d("Pattern %s", PatternLockUtils.patternToString(mPatternLockView, list));
                 processPattern();
             }
 
             @Override
             public void onCleared() {
-                Log_OC.d(TAG, "Pattern has been cleared");
+                Timber.d("Pattern has been cleared");
             }
         });
     }
