@@ -23,6 +23,7 @@ assignees: ''
  - [ ] [COM] inform `#release_coordination` and `#marketing` in internal chat
  - [ ] [GIT] Merge branch `release_Y.Y.Y` in owncloud/android-library, into master
  - [ ] [GIT] Merge branch `release_X.X.X` in owncloud/android, into master
+ - [ ] [DIS] Upload release APK to internal owncloud instance
  - [ ] [DIS] Upload & publish release APK and changelog in Play Store
  - [ ] [DIS] Update screenshots and store listing, if needed, in Play Store
  - [ ] [GIT] merge master branch into stable, in owncloud/android-library
