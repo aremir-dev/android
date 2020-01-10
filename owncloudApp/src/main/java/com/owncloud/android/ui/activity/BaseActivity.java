@@ -260,7 +260,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                     Timber.d("Account creation canceled");
 
                 } catch (Exception e) {
-                    Timber.e("Account creation finished in exception: ", e);
+                    Timber.e(e, "Account creation finished in exception");
                 }
 
             } else {

@@ -133,8 +133,7 @@ public class PatternLockActivity extends AppCompatActivity {
             mPatternExplanation.setVisibility(View.VISIBLE);
             setCancelButtonEnabled(true);
         } else {
-            throw new IllegalArgumentException(R.string.illegal_argument_exception_message + " " +
-                    TAG);
+            throw new IllegalArgumentException(R.string.illegal_argument_exception_message + " ");
         }
         setPatternListener();
     }
